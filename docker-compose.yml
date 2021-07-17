@@ -1,0 +1,29 @@
+version: "3"
+services:
+  payment:
+    build:
+      context: .
+      dockerfile: Dockerfile.local
+    volumes:
+      - ".:/payment"
+    networks:
+      - default
+      - localmongo
+      - cila-dev
+    external_links:
+      - localmongo1:mongo1
+      - localmongo2:mongo2
+      - localmongo3:mongo3
+    env_file:
+      - .env
+    container_name: my_sales_champion_payment
+    labels:
+      - "traefik.http.routers.payment.rule=Host(`api.mysaleschampion.cilalabs.test`)"
+      - traefik.enable=true
+      - traefik.docker.network=cila-dev
+networks:
+  localmongo:
+    external:
+      name: localmongo_default
+  cila-dev:
+    external: true
